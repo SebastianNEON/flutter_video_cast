@@ -96,18 +96,18 @@ class MethodChannelChromeCast extends ChromeCastPlatform {
   }
 
   @override
-  Future<void> stop({int? id}) {
-    return channel(id)!.invokeMethod<void>('chromeCast#stop');
+  Future<void> stop({int? id}) async {
+    await channel(id)?.invokeMethod<void>('chromeCast#stop');
   }
 
   @override
-  Future<bool?> isConnected({required int id}) {
-    return channel(id)!.invokeMethod<bool>('chromeCast#isConnected');
+  Future<bool> isConnected({required int id}) async {
+    return await channel(id)?.invokeMethod<bool>('chromeCast#isConnected') ?? false;
   }
 
   @override
-  Future<bool?> isPlaying({required int id}) {
-    return channel(id)!.invokeMethod<bool>('chromeCast#isPlaying');
+  Future<bool> isPlaying({required int id}) async {
+    return await channel(id)?.invokeMethod<bool>('chromeCast#isPlaying') ?? false;
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call, int id) async {
@@ -122,8 +122,7 @@ class MethodChannelChromeCast extends ChromeCastPlatform {
         _eventStreamController.add(RequestDidCompleteEvent(id));
         break;
       case 'chromeCast#requestDidFail':
-        _eventStreamController
-            .add(RequestDidFailEvent(id, call.arguments['error']));
+        _eventStreamController.add(RequestDidFailEvent(id, call.arguments['error']));
         break;
       default:
         throw MissingPluginException();
@@ -131,8 +130,7 @@ class MethodChannelChromeCast extends ChromeCastPlatform {
   }
 
   @override
-  Widget buildView(Map<String, dynamic> arguments,
-      PlatformViewCreatedCallback onPlatformViewCreated) {
+  Widget buildView(Map<String, dynamic> arguments, PlatformViewCreatedCallback onPlatformViewCreated) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       return AndroidView(
         viewType: 'ChromeCastButton',
